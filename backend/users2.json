@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "69ad987b35d082d38a8d91a4",
+    "name": "Admin User",
+    "email": "admin@dashboard.com",
+    "password": "password123",
+    "role": "Admin",
+    "createdAt": "2026-03-08T15:40:43.952Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ad987c35d082d38a8d91a7",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123",
+    "role": "User",
+    "createdAt": "2026-03-08T15:40:44.025Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ad987c35d082d38a8d91a9",
+    "name": "Jane Smith",
+    "email": "jane@example.com",
+    "password": "password123",
+    "role": "User",
+    "createdAt": "2026-03-08T15:40:44.027Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ae409005d1367727ed6f74",
+    "name": "Mizoram",
+    "email": "mizoramv.al23@bitsathy.ac.in",
+    "password": "password123",
+    "role": "User",
+    "createdAt": "2026-03-09T03:37:52.522Z",
+    "__v": 0
+  }
+]
