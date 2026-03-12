@@ -2,6 +2,9 @@
 
 A full-stack SaaS-style dashboard for managing user engagement, analytics, and activities. Built with React (Vite) on the frontend and Node.js (Express) on the backend.
 
+![Login Page](./screenshot_login.png)
+![Dashboard](./screenshot_dashboard.png)
+
 ## 🚀 Features
 
 - **User Authentication**: Secure Login & Signup with JWT.
