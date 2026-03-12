@@ -73,5 +73,27 @@ npm run dev
 
 The application will be available at `http://localhost:5173`.
 
+## 📖 How to Use
+
+### Admin Role
+- **Login**: Use an admin account to access the Admin Dashboard.
+- **Dashboard**: View overall platform analytics, active users, and recent activities.
+- **User Management**: Create, edit, or delete users from the system.
+- **Reports**: Generate and export usage reports.
+
+### User Role
+- **Registration**: New users can sign up and verify their email.
+- **Personal Dashboard**: View individual engagement metrics and activity history.
+- **Profile**: Manage personal settings and account information.
+
+## 🌐 Deployment
+
+For detailed instructions on how to deploy this application to production, please refer to the [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).
+
+Quick Summary:
+- **Database**: MongoDB Atlas
+- **Backend**: Render / Heroku
+- **Frontend**: Vercel / Netlify
+
 ## 📄 License
 MIT License
