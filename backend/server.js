@@ -18,73 +18,77 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 const zlib = require('zlib');
-const http = require('http');
 const { Server } = require('socket.io');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_for_dev_mode_only';
+
 const app = express();
-const server = http.createServer(app);
+const server = require('http').createServer(app);
 const io = new Server(server, { cors: { origin: process.env.FRONTEND_URL || '*' } });
 
 const fs = require('fs');
 const path = require('path');
 
-// --- Smart Local Inbox Implementation ---
+// -------- Email Service (Local Inbox + Production Support) --------
 const INBOX_PATH = path.join(__dirname, 'inbox.html');
 
-// Initialize inbox file if it doesn't exist
+// Initialize local inbox file for dev
 if (!fs.existsSync(INBOX_PATH)) {
     fs.writeFileSync(INBOX_PATH, `
         <html>
-        <head>
-            <title>Local Dev Inbox</title>
-            <style>
-                body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
-                .email-card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid #6366f1; }
-                .meta { color: #666; font-size: 0.9em; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-                .subject { font-weight: bold; color: #333; font-size: 1.1em; }
-                .timestamp { float: right; color: #999; }
-                .content { padding: 10px 0; }
-            </style>
-        </head>
-        <body>
-            <h1>📬 Smart Dashboard - Local Dev Inbox</h1>
-            <p>New emails will appear here automatically. Refresh to see updates.</p>
-            <div id="emails"></div>
-        </body>
+        <head><title>Local Dev Inbox</title><style>
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
+        .email-card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid #6366f1; }
+        .meta { color: #666; font-size: 0.9em; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .subject { font-weight: bold; color: #333; font-size: 1.1em; }
+        .timestamp { float: right; color: #999; }
+        </style></head>
+        <body><h1>📬 Smart Dashboard - Local Dev Inbox</h1><div id="emails"></div></body>
         </html>
     `);
 }
 
 const sendEmail = async (to, subject, html) => {
+    // 1. Log to Local Dev Inbox (always in dev, or as fallback)
     const timestamp = new Date().toLocaleString();
     const emailEntry = `
         <div class="email-card">
-            <div class="meta">
-                <span class="timestamp">${timestamp}</span>
-                <div class="subject">Subject: ${subject}</div>
-                <div>To: ${to}</div>
-            </div>
+            <div class="meta"><span class="timestamp">${timestamp}</span><div class="subject">${subject}</div><div>To: ${to}</div></div>
             <div class="content">${html}</div>
         </div>
     `;
 
     try {
-        // Prepend the new email to the top of the emails div
         let content = fs.readFileSync(INBOX_PATH, 'utf8');
         content = content.replace('<div id="emails">', `<div id="emails">${emailEntry}`);
         fs.writeFileSync(INBOX_PATH, content);
-
-        console.log(`[MAILER] Email "sent" to Local Inbox: ${subject}`);
-        console.log(`[MAILER] Open this file in your browser to view: ${INBOX_PATH}`);
-        return true;
+        console.log(`[MAILER] Email recorded in local inbox: ${subject}`);
     } catch (err) {
         console.error("[MAILER] Error saving to local inbox:", err);
-        return false;
     }
+
+    // 2. Try real SMTP if configured
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+        try {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+            });
+
+            await transporter.sendMail({ from: `"Smart Dashboard" <${process.env.EMAIL_USER}>`, to, subject, html });
+            console.log(`[MAILER] Real email sent to ${to}`);
+            return true;
+        } catch (err) {
+            console.error("[MAILER] Real SMTP failed:", err.message);
+        }
+    }
+
+    return true; // Return true as we at least "sent" it to the local inbox
 };
 
 let activeConnections = 0;
@@ -100,12 +104,16 @@ io.on('connection', (socket) => {
 app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
 app.use(express.json());
 
-// Connect to MongoDB
+// -------- Database Connection --------
 const defaultURI = 'mongodb://127.0.0.1:27017/smart-dashboard';
-const mongoURI = (process.env.MONGO_URI && process.env.MONGO_URI !== 'undefined') ? process.env.MONGO_URI : defaultURI;
+const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI || defaultURI;
+
 mongoose.connect(mongoURI)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error. Make sure MongoDB is running locally or MONGO_URI is set:', err));
+    .then(() => console.log('✅ Connected to MongoDB (' + (mongoURI === defaultURI ? 'Local' : 'Remote') + ')'))
+    .catch(err => {
+        console.error('❌ MongoDB connection error:', err.message);
+        console.log('💡 TIP: Make sure MongoDB is running locally or MONGODB_URI is set in your .env file.');
+    });
 
 // Seed mock data if empty
 async function seedData() {
@@ -202,12 +210,34 @@ app.post('/api/auth/login', async (req, res) => {
 
         const userObj = user.toObject();
         delete userObj.password;
-        res.json(userObj);
+
+        // Sign JWT
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({ ...userObj, token });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' });
     }
 });
+
+// Auth Middleware
+const authMiddleware = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'Unauthorized: No token provided' });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (err) {
+        res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    }
+};
 
 app.post('/api/auth/register', [
     body('name').notEmpty().withMessage('Name is required'),

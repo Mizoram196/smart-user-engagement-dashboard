@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { mockAuth } from '../services/api';
+import { login } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -9,9 +9,9 @@ export const AuthProvider = ({ children }) => {
         return saved ? JSON.parse(saved) : null;
     });
 
-    const login = async (email, password) => {
+    const loginUser = async (email, password) => {
         try {
-            const userData = await mockAuth(email, password);
+            const userData = await login(email, password);
             updateUser(userData);
             return userData;
         } catch (error) {
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, setUser: updateUser, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={{ user, login: loginUser, logout, setUser: updateUser, isAuthenticated: !!user }}>
             {children}
         </AuthContext.Provider>
     );

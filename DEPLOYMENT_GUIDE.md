@@ -40,3 +40,35 @@ This project is divided into **Frontend (Vite)** and **Backend (Node/Express)**.
 
 ## 4. Final Connection
 Once both are deployed, go back to Render and update the `FRONTEND_URL` variable with your actual Vercel URL. This ensures CORS works correctly.
+
+---
+
+## 5. Post-Deployment: How it Looks & How to Use
+
+### How It Will Look
+Once successfully deployed, the web application will feature a modern, responsive **SaaS-style UI**.
+- **Clean Interface**: Utilizes Framer Motion for smooth animations and transitions, giving it a premium feel.
+- **Device Friendly**: The design is fully responsive and works seamlessly across desktops, tablets, and mobile devices.
+- **Dynamic Dashboards**: Features beautiful, real-time charts (using Recharts) to visualize user engagement and activities.
+- **Role-based Views**: The interface dynamically adapts based on whether you are an Admin or a regular User.
+
+### How Users Should Use It
+
+**1. Registration & Verification:**
+- Navigate to your newly deployed Frontend URL.
+- Go to the **Sign Up** page.
+- Provide your details to register a new account.
+- *Verification:* The system sends an email to verify your address. Ensure you complete verification before attempting to log in.
+
+**2. Logging In:**
+- Go to the **Login** page and enter your verified credentials.
+- The system will automatically route you to the correct dashboard based on your assigned role.
+
+**3. For Regular Users:**
+- **Personal Dashboard:** You will see an overview of your own activity and engagement metrics.
+- **Profile Management:** You can manage your account settings and view your history.
+
+**4. For Administrators:**
+- **Admin Dashboard:** You will land on a comprehensive overview of the entire platform.
+- **Analytics:** View total active users, platform-wide engagement trends, and recent user activities.
+- **User Management:** Access the management panel to Add, Edit, or Delete users directly within the application.

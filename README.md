@@ -76,18 +76,30 @@ npm run dev
 
 The application will be available at `http://localhost:5173`.
 
+## ✨ Visual Experience
+
+The Smart User Engagement Dashboard is designed with a **premium SaaS aesthetic**:
+- **Modern UI**: Clean, white/dark themed interface with glassmorphism elements.
+- **Micro-interactions**: Smooth hover effects and page transitions powered by Framer Motion.
+- **Data Visualization**: Interactive and colorful charts using Recharts for immediate insights.
+- **Responsive Layout**: Works flawlessly on Mobile, Tablet, and Desktop.
+
 ## 📖 How to Use
 
-### Admin Role
-- **Login**: Use an admin account to access the Admin Dashboard.
-- **Dashboard**: View overall platform analytics, active users, and recent activities.
-- **User Management**: Create, edit, or delete users from the system.
-- **Reports**: Generate and export usage reports.
+### 1. Getting Started
+- **Sign Up**: Create a new account. You will receive a verification email (in development, check your local mail interceptor if configured).
+- **Verify**: Click the link in your email to activate your account.
+- **Login**: Use your credentials to enter the dashboard.
 
-### User Role
-- **Registration**: New users can sign up and verify their email.
-- **Personal Dashboard**: View individual engagement metrics and activity history.
-- **Profile**: Manage personal settings and account information.
+### 2. Admin Features (Control Center)
+- **Home**: View total active users and high-level engagement metrics.
+- **User List**: Manage all registered users. You can add new ones or edit/delete existing records.
+- **Analytics**: Deep dive into trends and activity logs across the entire platform.
+
+### 3. User Features (Personal Workspace)
+- **Personal Stats**: See your own engagement score and recent activities.
+- **Activity Log**: Keep track of what you've done on the platform.
+- **Settings**: Update your profile information.
 
 ## 🌐 Deployment
 
