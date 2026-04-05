@@ -252,20 +252,15 @@ app.post('/api/auth/register', [
         const existing = await User.findOne({ email });
         if (existing) return res.status(400).json({ error: 'Email already exists' });
 
-        const verificationToken = crypto.randomBytes(32).toString('hex');
-        const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-
         const newUser = await User.create({
             name, email, password,
-            verificationToken, verificationTokenExpires,
-            isVerified: false
+            isVerified: true // Automatically verify user, bypassing email verification
         });
 
-        // Send email
-        const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}`;
-        await sendEmail(email, "Verify Your Email", `Welcome ${name}, please verify your email using this link: <a href="${verifyUrl}">Verify Email</a>`);
+        // Initialize UserStats for the new user immediately to prevent null errors on dashboard
+        await UserStats.create({ userId: newUser._id });
 
-        res.status(201).json({ message: 'Registration successful! Please check your email for verification link.' });
+        res.status(201).json({ message: 'Registration successful! You can now log in.' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Registration failed' });
