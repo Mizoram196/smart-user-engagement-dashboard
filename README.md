@@ -13,6 +13,8 @@ A full-stack SaaS-style dashboard for managing user engagement, analytics, and a
 - **Activity Tracking**: Monitor user actions and engagement.
 - **Responsive Design**: Modern UI with Framer Motion and Lucide icons.
 - **User Management**: Admin can add, edit, and delete users.
+- **n8n Automation**: Integrated Automation Hub to trigger external workflows (Slack, Discord, Email, etc).
+- **Glassmorphism UI**: High-end modern design using CSS glass filters and smooth transitions.
 
 ## 🛠️ Tech Stack
 
@@ -99,7 +101,28 @@ The Smart User Engagement Dashboard is designed with a **premium SaaS aesthetic*
 ### 3. User Features (Personal Workspace)
 - **Personal Stats**: See your own engagement score and recent activities.
 - **Activity Log**: Keep track of what you've done on the platform.
-- **Settings**: Update your profile information.
+- **Settings**: Update your profile information and dashboard preferences.
+
+## 🤖 Automation & n8n Integration
+
+### What is n8n?
+n8n is a powerful, low-code **Workflow Automation Tool**. It allows you to connect this dashboard to **400+ external apps** (like Slack, Gmail, Discord, Google Sheets, Telegram, etc.) without writing a single line of backend code.
+
+### Why do we use it?
+- **Real-world Actions**: Instead of just seeing data, you can *act* on it. For example, send a Slack message when a new user registers.
+- **Save Time**: You don't have to build custom integrations for every app; n8n handles the heavy lifting.
+- **Scalability**: Easily add more complex logic (like "If engagement > 80, send a congratulatory email").
+
+### How to use n8n with this Dashboard:
+1. **Get n8n**: Sign up at [n8n.io](https://n8n.io/) or run n8n locally.
+2. **Create Workflow**: Start a new workflow and add a **"Webhook"** node.
+3. **Configure Webhook**: Set the method to `POST` and copy the **Production URL**.
+4. **Link to Dashboard**:
+   - Log in as **Admin**.
+   - Navigate to the **Admin Dashboard** or **Settings**.
+   - Paste the URL into the **"Workflow Webhook URL"** box.
+5. **Test it**: Click **"Trigger n8n Workflow"**. You will see the data appear in n8n instantly!
+
 
 ## 🌐 Deployment
 
