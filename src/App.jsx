@@ -14,6 +14,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 import UserManagement from './pages/UserManagement';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import HeatmapView from './pages/HeatmapView';
 import SessionReplayView from './pages/SessionReplayView';
 
@@ -59,7 +60,7 @@ function App() {
                         {/* Common Authenticated Routes */}
                         <Route element={<ProtectedRoute />}>
                             <Route path="/profile" element={<Profile />} />
-                            <Route path="/settings" element={<Profile />} />
+                            <Route path="/settings" element={<Settings />} />
                         </Route>
 
                         <Route path="/" element={<RootRedirect />} />
